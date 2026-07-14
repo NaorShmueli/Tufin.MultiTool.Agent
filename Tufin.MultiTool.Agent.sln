@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiTool.Agent.API", "Tufin.MultiTool.Agent.API\Tufin.MultiTool.Agent.API.csproj", "{AB17D89D-EB25-4075-B6FE-C82806303785}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.Domain", "Tufin.MultiAgentTool.Domain\Tufin.MultiAgentTool.Domain.csproj", "{6819C968-0ABC-4A3A-9543-944556EF0E4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.Application", "Tufin.MultiAgentTool.Application\Tufin.MultiAgentTool.Application.csproj", "{5DEB22E6-3E95-4D88-AD99-1C4564EF0C56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.Tools", "Tufin.MultiAgentTool.Tools\Tufin.MultiAgentTool.Tools.csproj", "{F7E00693-83F7-4E18-AF6C-CFBF99D703D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.Infrastructure", "Tufin.MultiAgentTool.Infrastructure\Tufin.MultiAgentTool.Infrastructure.csproj", "{4A0E7EF4-FC93-4BB9-9CAE-2A448543258C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.Persistence", "Tufin.MultiAgentTool.Persistence\Tufin.MultiAgentTool.Persistence.csproj", "{FD96CA9F-4255-417B-AEBB-1C09AF4F3FB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.Agent", "Tufin.MultiAgentTool.Agent\Tufin.MultiAgentTool.Agent.csproj", "{0BBDA12E-6541-4372-BD41-5B89BAFEAC79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.UnitTests", "Tufin.MultiAgentTool.UnitTests\Tufin.MultiAgentTool.UnitTests.csproj", "{142C45EB-39C2-46B8-832F-402A6AA3CA0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.IntegrationTests", "Tufin.MultiAgentTool.IntegrationTests\Tufin.MultiAgentTool.IntegrationTests.csproj", "{F646E2A0-DFA8-47D7-9A79-AC0B6B52A7D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tufin.MultiAgentTool.EvaluationTests", "Tufin.MultiAgentTool.EvaluationTests\Tufin.MultiAgentTool.EvaluationTests.csproj", "{B8C57D9A-B618-4046-BD0F-D335DBF7F30A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB17D89D-EB25-4075-B6FE-C82806303785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB17D89D-EB25-4075-B6FE-C82806303785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB17D89D-EB25-4075-B6FE-C82806303785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB17D89D-EB25-4075-B6FE-C82806303785}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6819C968-0ABC-4A3A-9543-944556EF0E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6819C968-0ABC-4A3A-9543-944556EF0E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6819C968-0ABC-4A3A-9543-944556EF0E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6819C968-0ABC-4A3A-9543-944556EF0E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DEB22E6-3E95-4D88-AD99-1C4564EF0C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DEB22E6-3E95-4D88-AD99-1C4564EF0C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DEB22E6-3E95-4D88-AD99-1C4564EF0C56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DEB22E6-3E95-4D88-AD99-1C4564EF0C56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7E00693-83F7-4E18-AF6C-CFBF99D703D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7E00693-83F7-4E18-AF6C-CFBF99D703D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7E00693-83F7-4E18-AF6C-CFBF99D703D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7E00693-83F7-4E18-AF6C-CFBF99D703D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A0E7EF4-FC93-4BB9-9CAE-2A448543258C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A0E7EF4-FC93-4BB9-9CAE-2A448543258C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A0E7EF4-FC93-4BB9-9CAE-2A448543258C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A0E7EF4-FC93-4BB9-9CAE-2A448543258C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD96CA9F-4255-417B-AEBB-1C09AF4F3FB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD96CA9F-4255-417B-AEBB-1C09AF4F3FB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD96CA9F-4255-417B-AEBB-1C09AF4F3FB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD96CA9F-4255-417B-AEBB-1C09AF4F3FB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BBDA12E-6541-4372-BD41-5B89BAFEAC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BBDA12E-6541-4372-BD41-5B89BAFEAC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BBDA12E-6541-4372-BD41-5B89BAFEAC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BBDA12E-6541-4372-BD41-5B89BAFEAC79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{142C45EB-39C2-46B8-832F-402A6AA3CA0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{142C45EB-39C2-46B8-832F-402A6AA3CA0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{142C45EB-39C2-46B8-832F-402A6AA3CA0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{142C45EB-39C2-46B8-832F-402A6AA3CA0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F646E2A0-DFA8-47D7-9A79-AC0B6B52A7D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F646E2A0-DFA8-47D7-9A79-AC0B6B52A7D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F646E2A0-DFA8-47D7-9A79-AC0B6B52A7D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F646E2A0-DFA8-47D7-9A79-AC0B6B52A7D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8C57D9A-B618-4046-BD0F-D335DBF7F30A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8C57D9A-B618-4046-BD0F-D335DBF7F30A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8C57D9A-B618-4046-BD0F-D335DBF7F30A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8C57D9A-B618-4046-BD0F-D335DBF7F30A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09886757-F27E-4116-8BDA-759F66748A9E}
+	EndGlobalSection
+EndGlobal
