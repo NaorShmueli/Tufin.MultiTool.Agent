@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Tufin.MultiAgentTool.Infrastructure.DependencyInjection;
+using Tufin.MultiAgentTool.Tools.DependencyInjection;
 
 namespace Tufin.MultiTool.Agent.API.AppStart;
 
@@ -22,7 +24,8 @@ public partial class Startup
         ConfigureLogs(services);
         ConfigureSwagger(services);
         ConfigureHealthChecks(services);
-
+        services.AddInfrastructureServices(_configuration);
+        services.AddAgentTools();
 
         //services.AddMemoryCache();
         services.AddCors(options =>
