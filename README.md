@@ -51,14 +51,17 @@ SQLite persistence
 
 Main projects:
 
-- `Tufin.MultiTool.Agent.API`: controllers, startup, Swagger, health endpoint.
-- `Tufin.MultiAgentTool.Agent`: reasoning loop, prompt building, tool registry.
-- `Tufin.MultiAgentTool.Application`: interfaces and use cases.
-- `Tufin.MultiAgentTool.Tools`: calculator, weather, unit conversion.
-- `Tufin.MultiAgentTool.Infrastructure`: Ollama and Open-Meteo integrations.
-- `Tufin.MultiAgentTool.Persistence`: SQLite storage.
-- `Tufin.MultiAgentTool.UnitTests`, `EvaluationTests`, `IntegrationTests`: automated validation.
-- `Tufin.MultiTool.Agent.Frontend`: React, TypeScript, Vite, Tailwind UI.
+- `Tufin.MultiTool.Agent.API`: ASP.NET Core host, controllers, Swagger, health checks, static frontend hosting, startup/database initialization.
+- `Tufin.MultiAgentTool.Domain`: core task aggregate, task status, trace event model, and token/latency metrics.
+- `Tufin.MultiAgentTool.Application`: application services, interfaces, language-model contracts, persistence abstractions, tool contracts, and weather abstractions.
+- `Tufin.MultiAgentTool.Agent`: observe-decide-act runner, system prompt, tool registry, JSON serialization, and model decision summaries.
+- `Tufin.MultiAgentTool.Tools`: real tool implementations: `calculator`, `weather`, `unit_converter`, and `database_query` with seeded catalog initialization.
+- `Tufin.MultiAgentTool.Infrastructure`: external integrations for Ollama, Open-Meteo, and system time.
+- `Tufin.MultiAgentTool.Persistence`: SQLite observability database, EF Core context, entities, mappings, repository, task reader, and database initialization.
+- `Tufin.MultiAgentTool.UnitTests`: deterministic unit tests for tools, domain behavior, and tool registry behavior.
+- `Tufin.MultiAgentTool.EvaluationTests`: golden-path agent tests using a scripted model client to validate known task outputs and traces.
+- `Tufin.MultiAgentTool.IntegrationTests`: API smoke tests for health and task retrieval with a fresh SQLite database.
+- `Tufin.MultiTool.Agent.Frontend`: React, TypeScript, Vite, and Tailwind UI for overview, one-task chat, trace viewing, and task history.
 
 ## Reasoning Loop
 
@@ -126,6 +129,7 @@ Start services:
 docker compose up --build -d
 ```
 
+
 On first startup, Docker Compose automatically runs a one-shot
 `ollama-pull` service that downloads `llama3.2:3b`. This can take a few
 minutes. The model is stored in the `ollama-data` volume and reused on later
@@ -136,6 +140,7 @@ Check health:
 ```powershell
 Invoke-WebRequest http://localhost:8080/health -UseBasicParsing
 ```
+
 
 Swagger is available in development at:
 
@@ -161,6 +166,7 @@ Stop services:
 docker compose down
 ```
 
+
 ## Run Locally
 
 Start Ollama locally and pull the model:
@@ -169,17 +175,20 @@ Start Ollama locally and pull the model:
 ollama pull llama3.2:3b
 ```
 
+
 Run the API:
 
 ```powershell
 dotnet run --project Tufin.MultiTool.Agent.API/Tufin.MultiTool.Agent.API.csproj
 ```
 
+
 Run tests:
 
 ```powershell
-dotnet test Tufin.MultiTool.Agent.sln
+dotnet test Tufin.MultiTool.Agent.sln -m:1
 ```
+
 
 Run frontend locally during development:
 
@@ -189,11 +198,13 @@ npm install
 npm run dev
 ```
 
+
 The Vite dev server runs at:
 
 ```text
 http://localhost:5173
 ```
+
 
 It proxies API calls to `http://localhost:8080`.
 
@@ -204,6 +215,7 @@ cd Tufin.MultiTool.Agent.Frontend
 npm run build
 ```
 
+
 ## API Examples
 
 Submit a task:
@@ -213,17 +225,20 @@ $body = @{ task = "Calculate 2 + 3 * 4" } | ConvertTo-Json
 Invoke-RestMethod -Method Post -Uri http://localhost:8080/task -Body $body -ContentType "application/json"
 ```
 
+
 Retrieve a task:
 
 ```powershell
 Invoke-RestMethod http://localhost:8080/tasks/{task_id}
 ```
 
+
 List recent tasks:
 
 ```powershell
 Invoke-RestMethod http://localhost:8080/tasks
 ```
+
 
 ## Response Shape
 
@@ -356,13 +371,13 @@ The solution includes:
 Run:
 
 ```powershell
-dotnet test Tufin.MultiTool.Agent.sln
+dotnet test Tufin.MultiTool.Agent.sln -m:1
 ```
 
 Current verified result:
 
 ```text
-Passed: 24, Failed: 0
+Passed: 25, Failed: 0
 ```
 
 ## Notes And Assumptions
@@ -371,4 +386,5 @@ Passed: 24, Failed: 0
 - Weather uses Open-Meteo, which does not require an API key.
 - Currency conversion is intentionally not implemented because it requires live exchange-rate data.
 - The optional `database_query` bonus is implemented.
-- Multi-turn context and frontend bonuses are not implemented.
+- The optional frontend bonus is implemented.
+- Multi-turn context is not implemented; each submitted task is independent.
