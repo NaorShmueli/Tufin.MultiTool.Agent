@@ -17,7 +17,7 @@ public sealed class AgentDecisionSummaryFactory
 
             return toolNames.Length == 1
                 ? $"The model selected the '{toolNames[0]}' tool."
-                : $"The model selected the following tools: " +
+                : "The model selected the following tools: " +
                   string.Join(", ", toolNames) + ".";
         }
 

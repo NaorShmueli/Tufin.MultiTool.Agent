@@ -35,7 +35,7 @@ public sealed class UnitConverterToolTests
         Assert.Equal(
             68,
             convertedValue,
-            precision: 10);
+            10);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public sealed class UnitConverterToolTests
         Assert.Equal(
             6.2137119224,
             convertedValue,
-            precision: 8);
+            8);
     }
 
     [Fact]

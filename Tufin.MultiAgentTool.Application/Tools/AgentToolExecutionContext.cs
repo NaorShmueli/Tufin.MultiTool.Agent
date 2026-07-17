@@ -1,10 +1,9 @@
 ﻿namespace Tufin.MultiAgentTool.Application.Tools;
 
 /// <summary>
-/// Trusted backend context passed to a tool.
-///
-/// Values in this object are created by the backend,
-/// not supplied or selected by the LLM.
+///     Trusted backend context passed to a tool.
+///     Values in this object are created by the backend,
+///     not supplied or selected by the LLM.
 /// </summary>
 public sealed class AgentToolExecutionContext
 {

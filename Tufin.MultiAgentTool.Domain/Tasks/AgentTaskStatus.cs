@@ -1,7 +1,7 @@
 ﻿namespace Tufin.MultiAgentTool.Domain.Tasks;
 
 /// <summary>
-/// Represents the lifecycle of an agent task.
+///     Represents the lifecycle of an agent task.
 /// </summary>
 public enum AgentTaskStatus
 {

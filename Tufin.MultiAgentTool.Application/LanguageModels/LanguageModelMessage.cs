@@ -1,8 +1,8 @@
 ﻿namespace Tufin.MultiAgentTool.Application.LanguageModels;
 
 /// <summary>
-/// Provider-independent representation of a message
-/// exchanged with the language model.
+///     Provider-independent representation of a message
+///     exchanged with the language model.
 /// </summary>
 public sealed class LanguageModelMessage
 {
@@ -64,11 +64,11 @@ public sealed class LanguageModelMessage
         }
 
         return new LanguageModelMessage(
-            role: LanguageModelRole.Assistant,
-            content: null,
-            toolCalls: toolCalls.ToArray(),
-            toolCallId: null,
-            toolName: null);
+            LanguageModelRole.Assistant,
+            null,
+            toolCalls.ToArray(),
+            null,
+            null);
     }
 
     public static LanguageModelMessage ToolResult(
@@ -98,11 +98,11 @@ public sealed class LanguageModelMessage
         }
 
         return new LanguageModelMessage(
-            role: LanguageModelRole.Tool,
-            content: resultJson,
-            toolCalls: null,
-            toolCallId: toolCallId.Trim(),
-            toolName: toolName.Trim());
+            LanguageModelRole.Tool,
+            resultJson,
+            null,
+            toolCallId.Trim(),
+            toolName.Trim());
     }
 
     private static LanguageModelMessage CreateTextMessage(
@@ -117,10 +117,10 @@ public sealed class LanguageModelMessage
         }
 
         return new LanguageModelMessage(
-            role: role,
-            content: content.Trim(),
-            toolCalls: null,
-            toolCallId: null,
-            toolName: null);
+            role,
+            content.Trim(),
+            null,
+            null,
+            null);
     }
 }

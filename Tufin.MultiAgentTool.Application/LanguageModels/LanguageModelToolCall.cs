@@ -3,8 +3,8 @@
 namespace Tufin.MultiAgentTool.Application.LanguageModels;
 
 /// <summary>
-/// A structured request produced by the language model
-/// to execute one backend tool.
+///     A structured request produced by the language model
+///     to execute one backend tool.
 /// </summary>
 public sealed class LanguageModelToolCall
 {

@@ -4,8 +4,8 @@ using Tufin.MultiAgentTool.Domain.Tracing;
 namespace Tufin.MultiAgentTool.Domain.Tasks;
 
 /// <summary>
-/// Aggregate root representing one complete user task
-/// and all trace events produced while executing it.
+///     Aggregate root representing one complete user task
+///     and all trace events produced while executing it.
 /// </summary>
 public sealed class AgentTask
 {
@@ -30,7 +30,7 @@ public sealed class AgentTask
         TokenUsage = TokenUsage.Zero;
     }
 
-    public Guid Id { get; private set; }
+    public Guid Id { get; }
 
     public string Input { get; private set; } = string.Empty;
 
@@ -42,7 +42,7 @@ public sealed class AgentTask
 
     public string? Error { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; }
 
     public DateTimeOffset? StartedAt { get; private set; }
 
@@ -75,10 +75,10 @@ public sealed class AgentTask
         }
 
         return new AgentTask(
-            id: Guid.NewGuid(),
-            input: input.Trim(),
-            model: model.Trim(),
-            createdAt: createdAt);
+            Guid.NewGuid(),
+            input.Trim(),
+            model.Trim(),
+            createdAt);
     }
 
     public void Start(DateTimeOffset startedAt)
@@ -100,10 +100,10 @@ public sealed class AgentTask
         StartedAt = startedAt;
 
         RecordTrace(
-            stepNumber: 0,
-            eventType: TraceEventType.TaskStarted,
-            occurredAt: startedAt,
-            decisionSummary: "Task execution started.");
+            0,
+            TraceEventType.TaskStarted,
+            startedAt,
+            "Task execution started.");
     }
 
     public AgentTraceEvent RecordTrace(
@@ -125,18 +125,18 @@ public sealed class AgentTask
         }
 
         var traceEvent = AgentTraceEvent.Create(
-            taskId: Id,
-            sequence: _traceEvents.Count + 1,
-            stepNumber: stepNumber,
-            eventType: eventType,
-            occurredAt: occurredAt,
-            decisionSummary: decisionSummary,
-            toolName: toolName,
-            argumentsJson: argumentsJson,
-            resultJson: resultJson,
-            latency: latency,
-            tokenUsage: tokenUsage,
-            error: error);
+            Id,
+            _traceEvents.Count + 1,
+            stepNumber,
+            eventType,
+            occurredAt,
+            decisionSummary,
+            toolName,
+            argumentsJson,
+            resultJson,
+            latency,
+            tokenUsage,
+            error);
 
         _traceEvents.Add(traceEvent);
 
@@ -164,10 +164,10 @@ public sealed class AgentTask
         EnsureValidCompletionTime(completedAt);
 
         RecordTrace(
-            stepNumber: GetCurrentStepNumber(),
-            eventType: TraceEventType.FinalAnswer,
-            occurredAt: completedAt,
-            decisionSummary: "The model produced the final user-facing answer.",
+            GetCurrentStepNumber(),
+            TraceEventType.FinalAnswer,
+            completedAt,
+            "The model produced the final user-facing answer.",
             resultJson: finalAnswer);
 
         FinalAnswer = finalAnswer.Trim();
@@ -176,10 +176,10 @@ public sealed class AgentTask
         TotalLatencyMs = CalculateTotalLatency(completedAt);
 
         RecordTrace(
-            stepNumber: GetCurrentStepNumber(),
-            eventType: TraceEventType.TaskCompleted,
-            occurredAt: completedAt,
-            decisionSummary: "Task completed successfully.");
+            GetCurrentStepNumber(),
+            TraceEventType.TaskCompleted,
+            completedAt,
+            "Task completed successfully.");
     }
 
     public void Fail(
@@ -200,10 +200,10 @@ public sealed class AgentTask
         Error = error.Trim();
 
         RecordTrace(
-            stepNumber: GetCurrentStepNumber(),
-            eventType: TraceEventType.TaskFailed,
-            occurredAt: failedAt,
-            decisionSummary: "Task execution failed.",
+            GetCurrentStepNumber(),
+            TraceEventType.TaskFailed,
+            failedAt,
+            "Task execution failed.",
             error: Error);
 
         Status = AgentTaskStatus.Failed;
@@ -223,10 +223,10 @@ public sealed class AgentTask
             : reason.Trim();
 
         RecordTrace(
-            stepNumber: GetCurrentStepNumber(),
-            eventType: TraceEventType.TaskCancelled,
-            occurredAt: cancelledAt,
-            decisionSummary: "Task execution was cancelled.",
+            GetCurrentStepNumber(),
+            TraceEventType.TaskCancelled,
+            cancelledAt,
+            "Task execution was cancelled.",
             error: Error);
 
         Status = AgentTaskStatus.Cancelled;
@@ -251,10 +251,10 @@ public sealed class AgentTask
         Error = $"Agent exceeded the maximum of {maxSteps} steps.";
 
         RecordTrace(
-            stepNumber: maxSteps,
-            eventType: TraceEventType.MaxStepsExceeded,
-            occurredAt: completedAt,
-            decisionSummary: "The agent loop was stopped by the maximum-step guard.",
+            maxSteps,
+            TraceEventType.MaxStepsExceeded,
+            completedAt,
+            "The agent loop was stopped by the maximum-step guard.",
             error: Error);
 
         Status = AgentTaskStatus.MaxStepsExceeded;

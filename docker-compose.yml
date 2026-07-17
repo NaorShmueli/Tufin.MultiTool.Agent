@@ -1,0 +1,57 @@
+services:
+  api:
+    container_name: tufin-multi-agent-api
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+      ConnectionStrings__AgentDatabase: >
+        Data Source=/app/data/agent-observability.db
+
+      Agent__MaxSteps: "8"
+      Agent__MaxToolCallsPerStep: "4"
+      Agent__Temperature: "0"
+
+      OpenMeteo__GeocodingBaseUrl: >
+        https://geocoding-api.open-meteo.com
+
+      OpenMeteo__ForecastBaseUrl: >
+        https://api.open-meteo.com
+
+      OpenMeteo__TimeoutSeconds: "10"
+
+      Ollama__BaseUrl: http://ollama:11434
+      Ollama__Model: llama3.2:3b
+
+    volumes:
+      - agent-data:/app/data
+
+    depends_on:
+      ollama:
+        condition: service_started
+
+    restart: unless-stopped
+
+  ollama:
+    container_name: tufin-multi-agent-ollama
+
+    image: ollama/ollama:latest
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama-data:/root/.ollama
+
+    restart: unless-stopped
+
+volumes:
+  agent-data:
+  ollama-data:

@@ -12,30 +12,29 @@ public sealed class WeatherToolTests
     {
         // Arrange
         var weather = new CurrentWeatherData(
-            RequestedCity: "London",
-            ResolvedCity: "London",
-            AdministrativeArea: "England",
-            Country: "United Kingdom",
-            CountryCode: "GB",
-            Latitude: 51.5085,
-            Longitude: -0.1257,
-            WeatherTimeUtc:
-                new DateTimeOffset(
-                    2026,
-                    7,
-                    16,
-                    10,
-                    0,
-                    0,
-                    TimeSpan.Zero),
-            TemperatureCelsius: 20,
-            ApparentTemperatureCelsius: 19.5,
-            RelativeHumidityPercent: 60,
-            WindSpeedKmh: 12,
-            WeatherCode: 2,
-            Condition: "partly cloudy",
-            IsDay: true,
-            Source: "Open-Meteo");
+            "London",
+            "London",
+            "England",
+            "United Kingdom",
+            "GB",
+            51.5085,
+            -0.1257,
+            new DateTimeOffset(
+                2026,
+                7,
+                16,
+                10,
+                0,
+                0,
+                TimeSpan.Zero),
+            20,
+            19.5,
+            60,
+            12,
+            2,
+            "partly cloudy",
+            true,
+            "Open-Meteo");
 
         var provider = new StubWeatherProvider(
             WeatherProviderResult.Success(weather));
@@ -124,9 +123,8 @@ public sealed class WeatherToolTests
         // Arrange
         var provider = new StubWeatherProvider(
             WeatherProviderResult.Failure(
-                errorCode: "location_not_found",
-                errorMessage:
-                    "No matching location was found."));
+                "location_not_found",
+                "No matching location was found."));
 
         var tool = new WeatherTool(provider);
 

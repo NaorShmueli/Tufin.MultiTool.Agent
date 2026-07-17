@@ -56,7 +56,7 @@ public sealed class CalculatorToolTests
         Assert.Equal(
             10.2,
             numericResult,
-            precision: 10);
+            10);
     }
 
     [Fact]

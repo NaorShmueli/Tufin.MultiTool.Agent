@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-
-namespace Tufin.MultiTool.Agent.API.AppStart;
+﻿namespace Tufin.MultiTool.Agent.API.AppStart;
 
 public partial class Startup
 {

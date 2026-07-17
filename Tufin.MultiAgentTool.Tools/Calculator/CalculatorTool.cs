@@ -15,9 +15,8 @@ public sealed class CalculatorTool : IAgentTool
 
     public AgentToolDefinition Definition { get; } =
         new(
-            name: "calculator",
-            description:
-               @"
+            "calculator",
+            @"
                 Safely evaluates a mathematical expression.
 
                 Use this tool for arithmetic calculations after all required
@@ -31,7 +30,7 @@ public sealed class CalculatorTool : IAgentTool
 
                 Do not use this tool to fetch external or current data.
                 ",
-            inputSchema: JsonSerializer.SerializeToElement(
+            JsonSerializer.SerializeToElement(
                 new
                 {
                     type = "object",
@@ -65,9 +64,8 @@ public sealed class CalculatorTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "A string property named 'expression' is required."));
+                    "invalid_arguments",
+                    "A string property named 'expression' is required."));
         }
 
         var expression = expressionProperty.GetString();
@@ -76,9 +74,8 @@ public sealed class CalculatorTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "Expression cannot be empty."));
+                    "invalid_arguments",
+                    "Expression cannot be empty."));
         }
 
         try
@@ -99,8 +96,8 @@ public sealed class CalculatorTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_expression",
-                    errorMessage: exception.Message));
+                    "invalid_expression",
+                    exception.Message));
         }
     }
 }

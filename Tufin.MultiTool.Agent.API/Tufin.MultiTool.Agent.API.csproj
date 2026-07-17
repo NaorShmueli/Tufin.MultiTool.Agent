@@ -27,10 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Tufin.MultiAgentTool.Agent\Tufin.MultiAgentTool.Agent.csproj" />
     <ProjectReference Include="..\Tufin.MultiAgentTool.Application\Tufin.MultiAgentTool.Application.csproj" />
     <ProjectReference Include="..\Tufin.MultiAgentTool.Infrastructure\Tufin.MultiAgentTool.Infrastructure.csproj" />

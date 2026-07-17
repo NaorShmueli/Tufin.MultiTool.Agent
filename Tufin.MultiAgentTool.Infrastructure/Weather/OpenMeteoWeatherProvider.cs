@@ -10,8 +10,8 @@ namespace Tufin.MultiAgentTool.Infrastructure.Weather;
 public sealed class OpenMeteoWeatherProvider : IWeatherProvider
 {
     private readonly HttpClient _httpClient;
-    private readonly OpenMeteoOptions _options;
     private readonly ILogger<OpenMeteoWeatherProvider> _logger;
+    private readonly OpenMeteoOptions _options;
 
     public OpenMeteoWeatherProvider(
         HttpClient httpClient,
@@ -33,8 +33,8 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
         if (string.IsNullOrWhiteSpace(city))
         {
             return WeatherProviderResult.Failure(
-                errorCode: "invalid_city",
-                errorMessage: "City is required.");
+                "invalid_city",
+                "City is required.");
         }
 
         try
@@ -47,9 +47,8 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
             if (location is null)
             {
                 return WeatherProviderResult.Failure(
-                    errorCode: "location_not_found",
-                    errorMessage:
-                        $"No location matching '{city.Trim()}' was found.");
+                    "location_not_found",
+                    $"No location matching '{city.Trim()}' was found.");
             }
 
             var current = await GetCurrentWeatherAsync(
@@ -60,39 +59,29 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
             if (current is null)
             {
                 return WeatherProviderResult.Failure(
-                    errorCode: "invalid_provider_response",
-                    errorMessage:
-                        "The weather provider returned no current weather data.");
+                    "invalid_provider_response",
+                    "The weather provider returned no current weather data.");
             }
 
             var weather = new CurrentWeatherData(
-                RequestedCity: city.Trim(),
-                ResolvedCity: location.Name,
-                AdministrativeArea: location.AdministrativeArea,
-                Country: location.Country,
-                CountryCode: location.CountryCode,
-                Latitude: location.Latitude,
-                Longitude: location.Longitude,
-                WeatherTimeUtc:
-                    DateTimeOffset.FromUnixTimeSeconds(
-                        current.TimeUnixSeconds),
-                TemperatureCelsius:
-                    current.TemperatureCelsius,
-                ApparentTemperatureCelsius:
-                    current.ApparentTemperatureCelsius,
-                RelativeHumidityPercent:
-                    current.RelativeHumidityPercent,
-                WindSpeedKmh:
-                    current.WindSpeedKmh,
-                WeatherCode:
-                    current.WeatherCode,
-                Condition:
-                    OpenMeteoWeatherCodeMapper.ToDescription(
-                        current.WeatherCode),
-                IsDay:
-                    current.IsDay == 1,
-                Source:
-                    "Open-Meteo");
+                city.Trim(),
+                location.Name,
+                location.AdministrativeArea,
+                location.Country,
+                location.CountryCode,
+                location.Latitude,
+                location.Longitude,
+                DateTimeOffset.FromUnixTimeSeconds(
+                    current.TimeUnixSeconds),
+                current.TemperatureCelsius,
+                current.ApparentTemperatureCelsius,
+                current.RelativeHumidityPercent,
+                current.WindSpeedKmh,
+                current.WeatherCode,
+                OpenMeteoWeatherCodeMapper.ToDescription(
+                    current.WeatherCode),
+                current.IsDay == 1,
+                "Open-Meteo");
 
             return WeatherProviderResult.Success(weather);
         }
@@ -109,9 +98,8 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
                 city);
 
             return WeatherProviderResult.Failure(
-                errorCode: "weather_provider_timeout",
-                errorMessage:
-                    "The weather provider did not respond within the configured timeout.");
+                "weather_provider_timeout",
+                "The weather provider did not respond within the configured timeout.");
         }
         catch (HttpRequestException exception)
         {
@@ -121,9 +109,8 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
                 city);
 
             return WeatherProviderResult.Failure(
-                errorCode: "weather_provider_unavailable",
-                errorMessage:
-                    "The weather provider is currently unavailable.");
+                "weather_provider_unavailable",
+                "The weather provider is currently unavailable.");
         }
         catch (JsonException exception)
         {
@@ -133,9 +120,8 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
                 city);
 
             return WeatherProviderResult.Failure(
-                errorCode: "invalid_provider_response",
-                errorMessage:
-                    "The weather provider returned an invalid response.");
+                "invalid_provider_response",
+                "The weather provider returned an invalid response.");
         }
     }
 
@@ -167,7 +153,7 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
         var payload =
             await response.Content
                 .ReadFromJsonAsync<OpenMeteoGeocodingResponse>(
-                    cancellationToken: cancellationToken);
+                    cancellationToken);
 
         return payload?.Results?.FirstOrDefault();
     }
@@ -211,7 +197,7 @@ public sealed class OpenMeteoWeatherProvider : IWeatherProvider
         var payload =
             await response.Content
                 .ReadFromJsonAsync<OpenMeteoForecastResponse>(
-                    cancellationToken: cancellationToken);
+                    cancellationToken);
 
         return payload?.Current;
     }

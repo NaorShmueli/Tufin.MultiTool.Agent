@@ -3,12 +3,11 @@
 namespace Tufin.MultiAgentTool.Application.Tools;
 
 /// <summary>
-/// Describes a capability that may be selected by the language model.
-///
-/// The definition is sent to the LLM so it knows:
-/// - what the tool does;
-/// - when it should use it;
-/// - which arguments it must provide.
+///     Describes a capability that may be selected by the language model.
+///     The definition is sent to the LLM so it knows:
+///     - what the tool does;
+///     - when it should use it;
+///     - which arguments it must provide.
 /// </summary>
 public sealed class AgentToolDefinition
 {

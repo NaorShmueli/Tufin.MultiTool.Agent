@@ -3,7 +3,7 @@
 namespace Tufin.MultiAgentTool.Domain.Tracing;
 
 /// <summary>
-/// A single structured and persisted observation from an agent execution.
+///     A single structured and persisted observation from an agent execution.
 /// </summary>
 public sealed class AgentTraceEvent
 {
@@ -47,13 +47,13 @@ public sealed class AgentTraceEvent
     public Guid TaskId { get; private set; }
 
     /// <summary>
-    /// Absolute event order inside the task.
+    ///     Absolute event order inside the task.
     /// </summary>
     public int Sequence { get; private set; }
 
     /// <summary>
-    /// Agent loop iteration that produced this event.
-    /// Multiple events may belong to the same step.
+    ///     Agent loop iteration that produced this event.
+    ///     Multiple events may belong to the same step.
     /// </summary>
     public int StepNumber { get; private set; }
 
@@ -62,20 +62,20 @@ public sealed class AgentTraceEvent
     public DateTimeOffset OccurredAt { get; private set; }
 
     /// <summary>
-    /// A concise, user-safe explanation of the model's decision.
-    /// This is not raw chain-of-thought.
+    ///     A concise, user-safe explanation of the model's decision.
+    ///     This is not raw chain-of-thought.
     /// </summary>
     public string? DecisionSummary { get; private set; }
 
     public string? ToolName { get; private set; }
 
     /// <summary>
-    /// Serialized structured tool arguments.
+    ///     Serialized structured tool arguments.
     /// </summary>
     public string? ArgumentsJson { get; private set; }
 
     /// <summary>
-    /// Serialized structured tool result.
+    ///     Serialized structured tool result.
     /// </summary>
     public string? ResultJson { get; private set; }
 
@@ -120,25 +120,24 @@ public sealed class AgentTraceEvent
                 "Step number cannot be negative.");
         }
 
-  
 
         var latencyMs = latency.HasValue
             ? (long?)Math.Max(0L, (long)latency.Value.TotalMilliseconds)
             : null;
 
         return new AgentTraceEvent(
-            id: Guid.NewGuid(),
-            taskId: taskId,
-            sequence: sequence,
-            stepNumber: stepNumber,
-            eventType: eventType,
-            occurredAt: occurredAt,
-            decisionSummary: decisionSummary,
-            toolName: toolName,
-            argumentsJson: argumentsJson,
-            resultJson: resultJson,
-            latencyMs: latencyMs,
-            tokenUsage: tokenUsage,
-            error: error);
+            Guid.NewGuid(),
+            taskId,
+            sequence,
+            stepNumber,
+            eventType,
+            occurredAt,
+            decisionSummary,
+            toolName,
+            argumentsJson,
+            resultJson,
+            latencyMs,
+            tokenUsage,
+            error);
     }
 }

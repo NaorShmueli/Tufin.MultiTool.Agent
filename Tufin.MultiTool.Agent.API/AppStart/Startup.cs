@@ -1,9 +1,10 @@
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Tufin.MultiAgentTool.Agent.DependencyInjection;
+using Tufin.MultiAgentTool.Application.DependencyInjection;
 using Tufin.MultiAgentTool.Infrastructure.DependencyInjection;
+using Tufin.MultiAgentTool.Persistence.DependencyInjection;
 using Tufin.MultiAgentTool.Tools.DependencyInjection;
 
 namespace Tufin.MultiTool.Agent.API.AppStart;
@@ -23,51 +24,21 @@ public partial class Startup
     {
         ConfigureLogs(services);
         ConfigureSwagger(services);
-        ConfigureHealthChecks(services);
+        //ConfigureHealthChecks(services);
+        services.AddApplicationServices();
         services.AddInfrastructureServices(_configuration);
         services.AddAgentTools();
-
+        services.AddAgentPersistence(_configuration);
+        services.AddAgentOrchestration(_configuration);
         //services.AddMemoryCache();
-        services.AddCors(options =>
-        {
-            //options.AddPolicy("AllowAll", builder =>
-            //{
-            //    builder.WithOrigins("https://domforgeai.com") // must include scheme + port
-            //        .AllowCredentials()
-            //        .AllowAnyMethod()
-            //        .AllowAnyHeader();
-            //});
-            //options.AddPolicy("AllowLocal", builder =>
-            //{
-            //    builder.WithOrigins("localhost") // must include scheme + port
-            //        .AllowCredentials()
-            //        .AllowAnyMethod()
-            //        .AllowAnyHeader();
-            //});
-        });
-        //services.AddRateLimiter(options => {
-        //    options.AddFixedWindowLimiter("myPolicy", opt => {
-        //        opt.PermitLimit = 1;
-        //        opt.Window = TimeSpan.FromHours(1);
-        //    });
-        //});
-
-
-        // Add SignalR (for NotificationHub)
-        //services.AddSignalR();
-
-        //services.ConfigureAuthentication(_configuration);
-        //services.ConfigureAuthorization();
         services.AddControllers().AddNewtonsoftJson(options =>
         {
             options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             options.SerializerSettings.Converters.Add(new StringEnumConverter());
             options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            options.SerializerSettings.NullValueHandling =
+                NullValueHandling.Ignore;
         });
-
-
-
-
     }
 
 
@@ -77,57 +48,20 @@ public partial class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            //app.UseHttpsRedirection();
         }
-        app.Use(async (context, next) =>
-        {
-            var path = context.Request.Path.Value?.ToLower();
-            var hasForwardedProto = context.Request.Headers.ContainsKey("X-Forwarded-Proto");
-            var forwardedProto = context.Request.Headers["X-Forwarded-Proto"].FirstOrDefault();
 
-            // Don't modify scheme for health check endpoints
-            if (path?.StartsWith("/health") == true)
-            {
-                // Keep original scheme for health checks
-                await next();
-                return;
-            }
-
-            // For external traffic with forwarded proto header, use HTTPS
-            if (hasForwardedProto && forwardedProto == "https")
-            {
-                context.Request.Scheme = "https";
-            }
-
-            await next();
-        });
-
-        //app.UseForwardedHeaders();
         app.UseRouting();
-        app.UseCors("AllowAll");
-        //app.UseRateLimiter();
 
-        // ? Critical: Add this BEFORE Authentication
-        app.UseCookiePolicy(new CookiePolicyOptions
-        {
-            MinimumSameSitePolicy = SameSiteMode.Lax,
-            Secure = CookieSecurePolicy.SameAsRequest
-        });
-        //app.UseHttpsRedirection();
-        //app.UseAuthentication();
-        //app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-
-
-            //// Liveness probe - just checks if app is alive
-            //endpoints.MapHealthChecks("/health/live");
-
-            //// Readiness probe - checks if app is ready to serve traffic
-            //endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
+            //   endpoints.MapHealthChecks(
+            //   "/health",
+            //new HealthCheckOptions
             //{
-            //    Predicate = check => check.Tags.Contains("ready"),
-            //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            //    ResponseWriter =
+            //        UIResponseWriter.WriteHealthCheckUIResponse
             //});
         });
 

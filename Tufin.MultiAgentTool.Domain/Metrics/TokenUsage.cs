@@ -1,19 +1,11 @@
 ﻿namespace Tufin.MultiAgentTool.Domain.Metrics;
 
 /// <summary>
-/// Represents token consumption for a single model call
-/// or for the complete task.
+///     Represents token consumption for a single model call
+///     or for the complete task.
 /// </summary>
 public sealed record TokenUsage
 {
-    public static TokenUsage Zero { get; } = new(0, 0);
-
-    public int PromptTokens { get; }
-
-    public int CompletionTokens { get; }
-
-    public int TotalTokens => PromptTokens + CompletionTokens;
-
     public TokenUsage(
         int promptTokens,
         int completionTokens)
@@ -35,6 +27,14 @@ public sealed record TokenUsage
         PromptTokens = promptTokens;
         CompletionTokens = completionTokens;
     }
+
+    public static TokenUsage Zero { get; } = new(0, 0);
+
+    public int PromptTokens { get; }
+
+    public int CompletionTokens { get; }
+
+    public int TotalTokens => PromptTokens + CompletionTokens;
 
     public TokenUsage Add(TokenUsage other)
     {

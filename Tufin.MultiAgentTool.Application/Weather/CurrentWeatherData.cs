@@ -1,10 +1,9 @@
 ﻿namespace Tufin.MultiAgentTool.Application.Weather;
 
 /// <summary>
-/// Provider-independent representation of current weather data.
-///
-/// The Agent and WeatherTool do not need to know whether this data
-/// originated from Open-Meteo or another provider.
+///     Provider-independent representation of current weather data.
+///     The Agent and WeatherTool do not need to know whether this data
+///     originated from Open-Meteo or another provider.
 /// </summary>
 public sealed record CurrentWeatherData(
     string RequestedCity,

@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 using Tufin.MultiAgentTool.Agent.Configuration;
 using Tufin.MultiAgentTool.Agent.Serialization;
 using Tufin.MultiAgentTool.Agent.Tools;
@@ -10,29 +10,27 @@ using Tufin.MultiAgentTool.Application.Persistence;
 using Tufin.MultiAgentTool.Application.Time;
 using Tufin.MultiAgentTool.Application.Tools;
 using Tufin.MultiAgentTool.Domain.Tasks;
-using Tufin.MultiAgentTool.Domain.Tracing;
 using TraceEventType = Tufin.MultiAgentTool.Domain.Tracing.TraceEventType;
 
 namespace Tufin.MultiAgentTool.Agent.Orchestration;
 
 /// <summary>
-/// Executes the observe-decide-act agent loop.
-///
-/// The language model selects the next action.
-/// The backend validates and executes that action.
-/// Every observable step is recorded on the AgentTask aggregate.
+///     Executes the observe-decide-act agent loop.
+///     The language model selects the next action.
+///     The backend validates and executes that action.
+///     Every observable step is recorded on the AgentTask aggregate.
 /// </summary>
 public sealed class AgentRunner : IAgentRunner
 {
-    private readonly ILanguageModelClient _languageModelClient;
-    private readonly IAgentToolRegistry _toolRegistry;
-    private readonly IAgentTaskRepository _taskRepository;
     private readonly IClock _clock;
+    private readonly AgentJsonSerializer _jsonSerializer;
+    private readonly ILanguageModelClient _languageModelClient;
+    private readonly ILogger<AgentRunner> _logger;
+    private readonly AgentOptions _options;
     private readonly AgentPromptBuilder _promptBuilder;
     private readonly AgentDecisionSummaryFactory _summaryFactory;
-    private readonly AgentJsonSerializer _jsonSerializer;
-    private readonly AgentOptions _options;
-    private readonly ILogger<AgentRunner> _logger;
+    private readonly IAgentTaskRepository _taskRepository;
+    private readonly IAgentToolRegistry _toolRegistry;
 
     public AgentRunner(
         ILanguageModelClient languageModelClient,
@@ -191,9 +189,9 @@ public sealed class AgentRunner : IAgentRunner
             CancellationToken cancellationToken)
     {
         var request = new LanguageModelRequest(
-            messages: messages,
-            tools: toolDefinitions,
-            temperature: _options.Temperature);
+            messages,
+            toolDefinitions,
+            _options.Temperature);
 
         var response =
             await _languageModelClient.CompleteAsync(
@@ -201,11 +199,10 @@ public sealed class AgentRunner : IAgentRunner
                 cancellationToken);
 
         task.RecordTrace(
-            stepNumber: stepNumber,
-            eventType: TraceEventType.ModelDecision,
-            occurredAt: _clock.UtcNow,
-            decisionSummary:
-                _summaryFactory.Create(response),
+            stepNumber,
+            TraceEventType.ModelDecision,
+            _clock.UtcNow,
+            _summaryFactory.Create(response),
             latency: response.Latency,
             tokenUsage: response.TokenUsage);
 
@@ -271,14 +268,13 @@ public sealed class AgentRunner : IAgentRunner
                 toolCall.Arguments);
 
         task.RecordTrace(
-            stepNumber: stepNumber,
-            eventType: TraceEventType.ToolCall,
-            occurredAt: _clock.UtcNow,
-            decisionSummary:
-                $"The backend received a request to execute " +
-                $"the '{toolCall.Name}' tool.",
-            toolName: toolCall.Name,
-            argumentsJson: argumentsJson);
+            stepNumber,
+            TraceEventType.ToolCall,
+            _clock.UtcNow,
+            $"The backend received a request to execute " +
+            $"the '{toolCall.Name}' tool.",
+            toolCall.Name,
+            argumentsJson);
 
         await PersistAsync(
             task,
@@ -294,10 +290,9 @@ public sealed class AgentRunner : IAgentRunner
         {
             executionResult =
                 AgentToolExecutionResult.Failure(
-                    errorCode: "unknown_tool",
-                    errorMessage:
-                        $"The tool '{toolCall.Name}' " +
-                        "is not registered.");
+                    "unknown_tool",
+                    $"The tool '{toolCall.Name}' " +
+                    "is not registered.");
 
             toolLatency = TimeSpan.Zero;
         }
@@ -331,8 +326,8 @@ public sealed class AgentRunner : IAgentRunner
 
                 executionResult =
                     AgentToolExecutionResult.Failure(
-                        errorCode: "tool_execution_error",
-                        errorMessage: exception.Message);
+                        "tool_execution_error",
+                        exception.Message);
             }
             finally
             {
@@ -347,16 +342,16 @@ public sealed class AgentRunner : IAgentRunner
                 executionResult);
 
         task.RecordTrace(
-            stepNumber: stepNumber,
-            eventType: TraceEventType.ToolResult,
-            occurredAt: _clock.UtcNow,
-            decisionSummary: executionResult.IsSuccess
+            stepNumber,
+            TraceEventType.ToolResult,
+            _clock.UtcNow,
+            executionResult.IsSuccess
                 ? $"The '{toolCall.Name}' tool completed successfully."
                 : $"The '{toolCall.Name}' tool failed.",
-            toolName: toolCall.Name,
-            argumentsJson: argumentsJson,
-            resultJson: resultJson,
-            latency: toolLatency,
+            toolCall.Name,
+            argumentsJson,
+            resultJson,
+            toolLatency,
             error: executionResult.ErrorMessage);
 
         await PersistAsync(
@@ -365,9 +360,9 @@ public sealed class AgentRunner : IAgentRunner
 
         messages.Add(
             LanguageModelMessage.ToolResult(
-                toolCallId: toolCall.Id,
-                toolName: toolCall.Name,
-                resultJson: resultJson));
+                toolCall.Id,
+                toolCall.Name,
+                resultJson));
     }
 
     private Task PersistAsync(

@@ -3,8 +3,8 @@
 namespace Tufin.MultiAgentTool.Agent.Orchestration;
 
 /// <summary>
-/// Creates the stable instructions that control agent behavior.
-/// Tool schemas themselves are supplied separately in the model request.
+///     Creates the stable instructions that control agent behavior.
+///     Tool schemas themselves are supplied separately in the model request.
 /// </summary>
 public sealed class AgentPromptBuilder
 {

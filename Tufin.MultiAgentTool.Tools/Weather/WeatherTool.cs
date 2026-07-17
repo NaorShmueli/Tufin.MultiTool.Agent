@@ -15,25 +15,24 @@ public sealed class WeatherTool : IAgentTool
 
     public AgentToolDefinition Definition { get; } =
         new(
-            name: "weather",
-            description:
-                """
-                Fetches current weather conditions for a city using a live
-                external weather provider.
+            "weather",
+            """
+            Fetches current weather conditions for a city using a live
+            external weather provider.
 
-                Use this tool whenever the user asks about current weather,
-                current temperature, apparent temperature, humidity, wind,
-                or current weather conditions.
+            Use this tool whenever the user asks about current weather,
+            current temperature, apparent temperature, humidity, wind,
+            or current weather conditions.
 
-                The result is returned in Celsius and km/h.
+            The result is returned in Celsius and km/h.
 
-                When the user requests Fahrenheit or another unit, call this
-                weather tool first and then pass its numeric result to the
-                unit_converter tool.
+            When the user requests Fahrenheit or another unit, call this
+            weather tool first and then pass its numeric result to the
+            unit_converter tool.
 
-                Do not invent current weather information.
-                """,
-            inputSchema: JsonSerializer.SerializeToElement(
+            Do not invent current weather information.
+            """,
+            JsonSerializer.SerializeToElement(
                 new
                 {
                     type = "object",
@@ -75,9 +74,8 @@ public sealed class WeatherTool : IAgentTool
                 out var city))
         {
             return AgentToolExecutionResult.Failure(
-                errorCode: "invalid_arguments",
-                errorMessage:
-                    "A non-empty string property named 'city' is required.");
+                "invalid_arguments",
+                "A non-empty string property named 'city' is required.");
         }
 
         string? countryCode = null;
@@ -90,9 +88,8 @@ public sealed class WeatherTool : IAgentTool
                 JsonValueKind.String)
             {
                 return AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "'countryCode' must be a string.");
+                    "invalid_arguments",
+                    "'countryCode' must be a string.");
             }
 
             countryCode =
@@ -103,9 +100,8 @@ public sealed class WeatherTool : IAgentTool
                  !countryCode.All(char.IsLetter)))
             {
                 return AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "'countryCode' must contain exactly two letters.");
+                    "invalid_arguments",
+                    "'countryCode' must contain exactly two letters.");
             }
         }
 
@@ -119,12 +115,10 @@ public sealed class WeatherTool : IAgentTool
             providerResult.Weather is null)
         {
             return AgentToolExecutionResult.Failure(
-                errorCode:
-                    providerResult.ErrorCode ??
-                    "weather_lookup_failed",
-                errorMessage:
-                    providerResult.ErrorMessage ??
-                    "Current weather could not be retrieved.");
+                providerResult.ErrorCode ??
+                "weather_lookup_failed",
+                providerResult.ErrorMessage ??
+                "Current weather could not be retrieved.");
         }
 
         var weather = providerResult.Weather;

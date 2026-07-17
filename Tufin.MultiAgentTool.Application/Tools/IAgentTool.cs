@@ -3,8 +3,8 @@
 namespace Tufin.MultiAgentTool.Application.Tools;
 
 /// <summary>
-/// A backend capability that can be selected by the language model
-/// and executed by deterministic application code.
+///     A backend capability that can be selected by the language model
+///     and executed by deterministic application code.
 /// </summary>
 public interface IAgentTool
 {

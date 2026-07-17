@@ -3,7 +3,7 @@
 namespace Tufin.MultiAgentTool.Application.Tools;
 
 /// <summary>
-/// Structured outcome of a real tool execution.
+///     Structured outcome of a real tool execution.
 /// </summary>
 public sealed class AgentToolExecutionResult
 {
@@ -31,10 +31,10 @@ public sealed class AgentToolExecutionResult
         JsonElement output)
     {
         return new AgentToolExecutionResult(
-            isSuccess: true,
-            output: output,
-            errorCode: null,
-            errorMessage: null);
+            true,
+            output,
+            null,
+            null);
     }
 
     public static AgentToolExecutionResult Failure(
@@ -56,9 +56,9 @@ public sealed class AgentToolExecutionResult
         }
 
         return new AgentToolExecutionResult(
-            isSuccess: false,
-            output: null,
-            errorCode: errorCode.Trim(),
-            errorMessage: errorMessage.Trim());
+            false,
+            null,
+            errorCode.Trim(),
+            errorMessage.Trim());
     }
 }

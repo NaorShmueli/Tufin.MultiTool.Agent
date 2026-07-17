@@ -14,25 +14,25 @@ public sealed class AgentTaskTests
             new DateTimeOffset(2026, 7, 14, 10, 0, 0, TimeSpan.Zero);
 
         var task = AgentTask.Create(
-            input: "What is the weather in London?",
-            model: "llama3.2:3b",
-            createdAt: createdAt);
+            "What is the weather in London?",
+            "llama3.2:3b",
+            createdAt);
 
         task.Start(createdAt.AddSeconds(1));
 
         // Act
         task.RecordTrace(
-            stepNumber: 1,
-            eventType: TraceEventType.ModelDecision,
-            occurredAt: createdAt.AddSeconds(2),
-            decisionSummary: "Current weather data is required.",
+            1,
+            TraceEventType.ModelDecision,
+            createdAt.AddSeconds(2),
+            "Current weather data is required.",
             tokenUsage: new TokenUsage(
-                promptTokens: 120,
-                completionTokens: 25));
+                120,
+                25));
 
         task.Complete(
-            finalAnswer: "The current temperature in London is 20°C.",
-            completedAt: createdAt.AddSeconds(3));
+            "The current temperature in London is 20°C.",
+            createdAt.AddSeconds(3));
 
         // Assert
         Assert.Equal(
@@ -65,17 +65,14 @@ public sealed class AgentTaskTests
                 Assert.Equal(
                     TraceEventType.TaskStarted,
                     started.EventType),
-
             decision =>
                 Assert.Equal(
                     TraceEventType.ModelDecision,
                     decision.EventType),
-
             finalAnswer =>
                 Assert.Equal(
                     TraceEventType.FinalAnswer,
                     finalAnswer.EventType),
-
             completed =>
                 Assert.Equal(
                     TraceEventType.TaskCompleted,
@@ -89,14 +86,14 @@ public sealed class AgentTaskTests
         var now = DateTimeOffset.UtcNow;
 
         var task = AgentTask.Create(
-            input: "Calculate 2 + 2",
-            model: "llama3.2:3b",
-            createdAt: now);
+            "Calculate 2 + 2",
+            "llama3.2:3b",
+            now);
 
         // Act
         var action = () => task.Complete(
-            finalAnswer: "4",
-            completedAt: now.AddSeconds(1));
+            "4",
+            now.AddSeconds(1));
 
         // Assert
         Assert.Throws<InvalidOperationException>(action);
@@ -109,28 +106,28 @@ public sealed class AgentTaskTests
         var now = DateTimeOffset.UtcNow;
 
         var task = AgentTask.Create(
-            input: "Convert 10 kilometers to miles.",
-            model: "llama3.2:3b",
-            createdAt: now);
+            "Convert 10 kilometers to miles.",
+            "llama3.2:3b",
+            now);
 
         task.Start(now);
 
         // Act
         task.RecordTrace(
-            stepNumber: 1,
-            eventType: TraceEventType.ModelDecision,
-            occurredAt: now.AddMilliseconds(10));
+            1,
+            TraceEventType.ModelDecision,
+            now.AddMilliseconds(10));
 
         task.RecordTrace(
-            stepNumber: 1,
-            eventType: TraceEventType.ToolCall,
-            occurredAt: now.AddMilliseconds(20),
+            1,
+            TraceEventType.ToolCall,
+            now.AddMilliseconds(20),
             toolName: "unit_converter");
 
         task.RecordTrace(
-            stepNumber: 1,
-            eventType: TraceEventType.ToolResult,
-            occurredAt: now.AddMilliseconds(30),
+            1,
+            TraceEventType.ToolResult,
+            now.AddMilliseconds(30),
             toolName: "unit_converter");
 
         // Assert

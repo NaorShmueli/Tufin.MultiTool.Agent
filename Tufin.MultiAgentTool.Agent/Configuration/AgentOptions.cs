@@ -1,27 +1,27 @@
 ﻿namespace Tufin.MultiAgentTool.Agent.Configuration;
 
 /// <summary>
-/// Configuration of the agent execution loop.
+///     Configuration of the agent execution loop.
 /// </summary>
 public sealed class AgentOptions
 {
     public const string SectionName = "Agent";
 
     /// <summary>
-    /// Maximum number of LLM decision iterations per task.
-    /// Prevents infinite agent loops.
+    ///     Maximum number of LLM decision iterations per task.
+    ///     Prevents infinite agent loops.
     /// </summary>
     public int MaxSteps { get; set; } = 8;
 
     /// <summary>
-    /// Maximum number of tool calls accepted from one model response.
-    /// Independent tool calls may be returned together by some models.
+    ///     Maximum number of tool calls accepted from one model response.
+    ///     Independent tool calls may be returned together by some models.
     /// </summary>
     public int MaxToolCallsPerStep { get; set; } = 4;
 
     /// <summary>
-    /// Low temperature is preferred because tool selection
-    /// should be stable rather than creative.
+    ///     Low temperature is preferred because tool selection
+    ///     should be stable rather than creative.
     /// </summary>
     public double Temperature { get; set; } = 0;
 

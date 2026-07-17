@@ -3,7 +3,7 @@
 namespace Tufin.MultiAgentTool.Agent.Tools;
 
 /// <summary>
-/// Registry of backend capabilities exposed to the language model.
+///     Registry of backend capabilities exposed to the language model.
 /// </summary>
 public sealed class AgentToolRegistry : IAgentToolRegistry
 {
@@ -26,7 +26,7 @@ public sealed class AgentToolRegistry : IAgentToolRegistry
         if (duplicateNames.Length > 0)
         {
             throw new InvalidOperationException(
-                $"Duplicate agent tool names were registered: " +
+                "Duplicate agent tool names were registered: " +
                 string.Join(", ", duplicateNames));
         }
 

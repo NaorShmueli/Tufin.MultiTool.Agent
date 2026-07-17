@@ -3,12 +3,10 @@
 namespace Tufin.MultiAgentTool.Tools.Calculator;
 
 /// <summary>
-/// Evaluates a deliberately limited mathematical grammar.
-///
-/// Supported:
-/// +, -, *, /, %, ^, unary +/-, parentheses and decimal numbers.
-///
-/// This class does not execute code and does not use dynamic evaluation.
+///     Evaluates a deliberately limited mathematical grammar.
+///     Supported:
+///     +, -, *, /, %, ^, unary +/-, parentheses and decimal numbers.
+///     This class does not execute code and does not use dynamic evaluation.
 /// </summary>
 public sealed class SafeMathExpressionEvaluator
 {
@@ -50,13 +48,17 @@ public sealed class SafeMathExpressionEvaluator
     private sealed class Parser
     {
         private readonly string _text;
-        private int _position;
         private int _depth;
+        private int _position;
 
         public Parser(string text)
         {
             _text = text;
         }
+
+        private bool IsAtEnd => _position >= _text.Length;
+
+        private char CurrentCharacter => _text[_position];
 
         public double Parse()
         {
@@ -327,9 +329,5 @@ public sealed class SafeMathExpressionEvaluator
             return new MathExpressionException(
                 $"{message} Position: {_position}.");
         }
-
-        private bool IsAtEnd => _position >= _text.Length;
-
-        private char CurrentCharacter => _text[_position];
     }
 }

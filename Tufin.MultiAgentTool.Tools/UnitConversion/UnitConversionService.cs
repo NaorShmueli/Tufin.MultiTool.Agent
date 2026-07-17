@@ -67,11 +67,11 @@ public sealed class UnitConversionService
         }
 
         return new UnitConversionResult(
-            InputValue: value,
-            FromUnit: source.CanonicalName,
-            OutputValue: convertedValue,
-            ToUnit: target.CanonicalName,
-            Category: source.Category);
+            value,
+            source.CanonicalName,
+            convertedValue,
+            target.CanonicalName,
+            source.Category);
     }
 
     private static string Normalize(string unit)
@@ -101,10 +101,9 @@ public sealed class UnitConversionService
 
         AddLinearUnit(
             units,
-            canonicalName: "kilometer",
-            category: "length",
-            multiplierToBase: 1_000,
-            aliases:
+            "kilometer",
+            "length",
+            1_000,
             [
                 "km",
                 "kilometer",
@@ -115,10 +114,9 @@ public sealed class UnitConversionService
 
         AddLinearUnit(
             units,
-            canonicalName: "centimeter",
-            category: "length",
-            multiplierToBase: 0.01,
-            aliases:
+            "centimeter",
+            "length",
+            0.01,
             [
                 "cm",
                 "centimeter",
@@ -129,10 +127,9 @@ public sealed class UnitConversionService
 
         AddLinearUnit(
             units,
-            canonicalName: "millimeter",
-            category: "length",
-            multiplierToBase: 0.001,
-            aliases:
+            "millimeter",
+            "length",
+            0.001,
             [
                 "mm",
                 "millimeter",
@@ -143,31 +140,31 @@ public sealed class UnitConversionService
 
         AddLinearUnit(
             units,
-            canonicalName: "mile",
-            category: "length",
-            multiplierToBase: 1_609.344,
-            aliases: ["mi", "mile", "miles"]);
+            "mile",
+            "length",
+            1_609.344,
+            ["mi", "mile", "miles"]);
 
         AddLinearUnit(
             units,
-            canonicalName: "yard",
-            category: "length",
-            multiplierToBase: 0.9144,
-            aliases: ["yd", "yard", "yards"]);
+            "yard",
+            "length",
+            0.9144,
+            ["yd", "yard", "yards"]);
 
         AddLinearUnit(
             units,
-            canonicalName: "foot",
-            category: "length",
-            multiplierToBase: 0.3048,
-            aliases: ["ft", "foot", "feet"]);
+            "foot",
+            "length",
+            0.3048,
+            ["ft", "foot", "feet"]);
 
         AddLinearUnit(
             units,
-            canonicalName: "inch",
-            category: "length",
-            multiplierToBase: 0.0254,
-            aliases: ["in", "inch", "inches"]);
+            "inch",
+            "length",
+            0.0254,
+            ["in", "inch", "inches"]);
 
         AddUnit(
             units,
@@ -180,24 +177,24 @@ public sealed class UnitConversionService
 
         AddLinearUnit(
             units,
-            canonicalName: "gram",
-            category: "weight",
-            multiplierToBase: 0.001,
-            aliases: ["g", "gram", "grams"]);
+            "gram",
+            "weight",
+            0.001,
+            ["g", "gram", "grams"]);
 
         AddLinearUnit(
             units,
-            canonicalName: "pound",
-            category: "weight",
-            multiplierToBase: 0.45359237,
-            aliases: ["lb", "lbs", "pound", "pounds"]);
+            "pound",
+            "weight",
+            0.45359237,
+            ["lb", "lbs", "pound", "pounds"]);
 
         AddLinearUnit(
             units,
-            canonicalName: "ounce",
-            category: "weight",
-            multiplierToBase: 0.028349523125,
-            aliases: ["oz", "ounce", "ounces"]);
+            "ounce",
+            "weight",
+            0.028349523125,
+            ["oz", "ounce", "ounces"]);
 
         AddUnit(
             units,
@@ -217,7 +214,7 @@ public sealed class UnitConversionService
                 "fahrenheit",
                 "temperature",
                 value => (value - 32) * 5 / 9,
-                value => (value * 9 / 5) + 32),
+                value => value * 9 / 5 + 32),
             "f",
             "°f",
             "fahrenheit");
@@ -243,10 +240,10 @@ public sealed class UnitConversionService
         string[] aliases)
     {
         var definition = new UnitDefinition(
-            CanonicalName: canonicalName,
-            Category: category,
-            ToBaseUnit: value => value * multiplierToBase,
-            FromBaseUnit: value => value / multiplierToBase);
+            canonicalName,
+            category,
+            value => value * multiplierToBase,
+            value => value / multiplierToBase);
 
         AddUnit(units, definition, aliases);
     }

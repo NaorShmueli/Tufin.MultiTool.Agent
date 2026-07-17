@@ -1,10 +1,9 @@
 ﻿namespace Tufin.MultiAgentTool.Application.Weather;
 
 /// <summary>
-/// Explicit provider result.
-///
-/// Expected provider problems are represented as structured failures
-/// rather than exceptions that terminate the entire Agent loop.
+///     Explicit provider result.
+///     Expected provider problems are represented as structured failures
+///     rather than exceptions that terminate the entire Agent loop.
 /// </summary>
 public sealed class WeatherProviderResult
 {
@@ -34,10 +33,10 @@ public sealed class WeatherProviderResult
         ArgumentNullException.ThrowIfNull(weather);
 
         return new WeatherProviderResult(
-            isSuccess: true,
-            weather: weather,
-            errorCode: null,
-            errorMessage: null);
+            true,
+            weather,
+            null,
+            null);
     }
 
     public static WeatherProviderResult Failure(
@@ -59,9 +58,9 @@ public sealed class WeatherProviderResult
         }
 
         return new WeatherProviderResult(
-            isSuccess: false,
-            weather: null,
-            errorCode: errorCode.Trim(),
-            errorMessage: errorMessage.Trim());
+            false,
+            null,
+            errorCode.Trim(),
+            errorMessage.Trim());
     }
 }

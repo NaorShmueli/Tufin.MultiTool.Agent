@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using Tufin.MultiAgentTool.Application.Tools;
 
 namespace Tufin.MultiAgentTool.Tools.UnitConversion;
@@ -13,11 +14,11 @@ public sealed class UnitConverterTool : IAgentTool
         _conversionService = conversionService;
     }
 
+
     public AgentToolDefinition Definition { get; } =
         new(
-            name: "unit_converter",
-            description:
-                @"
+            "unit_converter",
+            @"
                 Converts a numeric value between supported units.
 
                 Supported categories:
@@ -33,7 +34,7 @@ public sealed class UnitConverterTool : IAgentTool
                 Currency conversion is not supported because exchange rates
                 are time-dependent and require a separate live data provider.
                 ",
-            inputSchema: JsonSerializer.SerializeToElement(
+            JsonSerializer.SerializeToElement(
                 new
                 {
                     type = "object",
@@ -112,9 +113,8 @@ public sealed class UnitConverterTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "A numeric property named 'value' is required."));
+                    "invalid_arguments",
+                    "A numeric property named 'value' is required."));
         }
 
         if (!TryReadString(
@@ -124,9 +124,8 @@ public sealed class UnitConverterTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "A string property named 'fromUnit' is required."));
+                    "invalid_arguments",
+                    "A string property named 'fromUnit' is required."));
         }
 
         if (!TryReadString(
@@ -136,9 +135,8 @@ public sealed class UnitConverterTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "invalid_arguments",
-                    errorMessage:
-                        "A string property named 'toUnit' is required."));
+                    "invalid_arguments",
+                    "A string property named 'toUnit' is required."));
         }
 
         try
@@ -171,8 +169,8 @@ public sealed class UnitConverterTool : IAgentTool
         {
             return Task.FromResult(
                 AgentToolExecutionResult.Failure(
-                    errorCode: "conversion_failed",
-                    errorMessage: exception.Message));
+                    "conversion_failed",
+                    exception.Message));
         }
     }
 
@@ -183,11 +181,28 @@ public sealed class UnitConverterTool : IAgentTool
     {
         value = default;
 
-        return arguments.TryGetProperty(
-                   propertyName,
-                   out var property) &&
-               property.ValueKind == JsonValueKind.Number &&
-               property.TryGetDouble(out value);
+        if (!arguments.TryGetProperty(
+                propertyName,
+                out var property))
+        {
+            return false;
+        }
+
+        if (property.ValueKind == JsonValueKind.Number)
+        {
+            return property.TryGetDouble(out value);
+        }
+
+        if (property.ValueKind == JsonValueKind.String)
+        {
+            return double.TryParse(
+                property.GetString(),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out value);
+        }
+
+        return false;
     }
 
     private static bool TryReadString(
