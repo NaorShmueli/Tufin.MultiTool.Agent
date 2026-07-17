@@ -124,11 +124,10 @@ Start services:
 docker compose up --build -d
 ```
 
-Pull the configured Ollama model once:
-
-```powershell
-docker exec -it tufin-multi-agent-ollama ollama pull llama3.2:3b
-```
+On first startup, Docker Compose automatically runs a one-shot
+`ollama-pull` service that downloads `llama3.2:3b`. This can take a few
+minutes. The model is stored in the `ollama-data` volume and reused on later
+starts unless volumes are removed with `docker compose down -v`.
 
 Check health:
 

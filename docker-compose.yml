@@ -37,8 +37,8 @@ services:
       - agent-data:/app/data
 
     depends_on:
-      ollama:
-        condition: service_started
+      ollama-pull:
+        condition: service_completed_successfully
 
     restart: unless-stopped
 
@@ -53,7 +53,29 @@ services:
     volumes:
       - ollama-data:/root/.ollama
 
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
     restart: unless-stopped
+
+  ollama-pull:
+    container_name: tufin-multi-agent-ollama-pull
+
+    image: ollama/ollama:latest
+
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+
+    command: pull llama3.2:3b
+
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+    restart: "no"
 
 volumes:
   agent-data:
