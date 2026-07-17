@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Tufin.MultiAgentTool.Agent.Configuration;
@@ -198,6 +200,14 @@ public sealed class AgentRunner : IAgentRunner
                 request,
                 cancellationToken);
 
+        if (TryCoerceToolCallFromContent(
+                response,
+                toolDefinitions,
+                out var coercedResponse))
+        {
+            response = coercedResponse;
+        }
+
         task.RecordTrace(
             stepNumber,
             TraceEventType.ModelDecision,
@@ -211,6 +221,170 @@ public sealed class AgentRunner : IAgentRunner
             cancellationToken);
 
         return response;
+    }
+
+    private static bool TryCoerceToolCallFromContent(
+        LanguageModelResponse response,
+        IReadOnlyList<AgentToolDefinition> toolDefinitions,
+        out LanguageModelResponse coercedResponse)
+    {
+        coercedResponse = response;
+
+        if (!response.HasFinalContent ||
+            string.IsNullOrWhiteSpace(response.Content))
+        {
+            return false;
+        }
+
+        if (TryParseJsonToolCall(
+                response.Content,
+                toolDefinitions,
+                out var toolCall) ||
+            TryParseMalformedDatabaseToolCall(
+                response.Content,
+                toolDefinitions,
+                out toolCall))
+        {
+            coercedResponse = new LanguageModelResponse(
+                response.Model,
+                null,
+                new[] { toolCall! },
+                response.TokenUsage,
+                response.Latency,
+                "coerced_tool_call");
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryParseJsonToolCall(
+        string content,
+        IReadOnlyList<AgentToolDefinition> toolDefinitions,
+        out LanguageModelToolCall? toolCall)
+    {
+        toolCall = null;
+
+        try
+        {
+            using var document = JsonDocument.Parse(content);
+            var root = document.RootElement;
+
+            if (root.ValueKind != JsonValueKind.Object ||
+                !root.TryGetProperty("name", out var nameElement) ||
+                nameElement.ValueKind != JsonValueKind.String)
+            {
+                return false;
+            }
+
+            var name = nameElement.GetString();
+
+            if (!IsKnownTool(name, toolDefinitions))
+            {
+                return false;
+            }
+
+            JsonElement arguments;
+
+            if (root.TryGetProperty("arguments", out var argumentsElement) &&
+                argumentsElement.ValueKind == JsonValueKind.Object)
+            {
+                arguments = argumentsElement.Clone();
+            }
+            else if (root.TryGetProperty("parameters", out var parametersElement) &&
+                     parametersElement.ValueKind == JsonValueKind.Object)
+            {
+                arguments = parametersElement.Clone();
+            }
+            else
+            {
+                return false;
+            }
+
+            toolCall = new LanguageModelToolCall(
+                $"content-{Guid.NewGuid():N}",
+                name!,
+                arguments);
+
+            return true;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
+    private static bool TryParseMalformedDatabaseToolCall(
+        string content,
+        IReadOnlyList<AgentToolDefinition> toolDefinitions,
+        out LanguageModelToolCall? toolCall)
+    {
+        toolCall = null;
+
+        if (!IsKnownTool("database_query", toolDefinitions))
+        {
+            return false;
+        }
+
+        var nameMatch = Regex.Match(
+            content,
+            "\"name\"\\s*:\\s*\"database_query\"",
+            RegexOptions.IgnoreCase);
+
+        if (!nameMatch.Success)
+        {
+            return false;
+        }
+
+        var queryMatch = Regex.Match(
+            content,
+            "\"query\"\\s*:\\s*\"(?<query>.*)\"\\s*}\\s*}?",
+            RegexOptions.IgnoreCase |
+            RegexOptions.Singleline);
+
+        if (!queryMatch.Success)
+        {
+            return false;
+        }
+
+        var query = queryMatch.Groups["query"].Value.Trim();
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return false;
+        }
+
+        query = Regex.Replace(
+            query,
+            "=\\s*\"(?<value>[^\"]+)\"",
+            match => "= '" +
+                     match.Groups["value"].Value.Replace("'", "''") +
+                     "'");
+
+        var arguments = JsonSerializer.SerializeToElement(
+            new
+            {
+                query
+            });
+
+        toolCall = new LanguageModelToolCall(
+            $"content-{Guid.NewGuid():N}",
+            "database_query",
+            arguments);
+
+        return true;
+    }
+
+    private static bool IsKnownTool(
+        string? name,
+        IReadOnlyList<AgentToolDefinition> toolDefinitions)
+    {
+        return !string.IsNullOrWhiteSpace(name) &&
+               toolDefinitions.Any(tool => string.Equals(
+                   tool.Name,
+                   name,
+                   StringComparison.OrdinalIgnoreCase));
     }
 
     private async Task<bool> HandleToolCallsAsync(

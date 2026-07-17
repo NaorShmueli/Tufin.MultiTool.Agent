@@ -15,6 +15,9 @@ services:
       ConnectionStrings__AgentDatabase: >
         Data Source=/app/data/agent-observability.db
 
+      CatalogDatabase__ConnectionString: >
+        Data Source=/app/data/catalog.db
+
       Agent__MaxSteps: "8"
       Agent__MaxToolCallsPerStep: "4"
       Agent__Temperature: "0"

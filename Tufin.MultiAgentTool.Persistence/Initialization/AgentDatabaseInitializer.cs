@@ -35,7 +35,7 @@ public sealed class AgentDatabaseInitializer
         EnsureDatabaseDirectoryExists(
             connectionString);
 
-        await _dbContext.Database.MigrateAsync(
+        await _dbContext.Database.EnsureCreatedAsync(
             cancellationToken);
     }
 

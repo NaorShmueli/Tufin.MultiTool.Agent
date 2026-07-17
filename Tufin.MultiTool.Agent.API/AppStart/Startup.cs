@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -24,10 +25,10 @@ public partial class Startup
     {
         ConfigureLogs(services);
         ConfigureSwagger(services);
-        //ConfigureHealthChecks(services);
+        ConfigureHealthChecks(services);
         services.AddApplicationServices();
         services.AddInfrastructureServices(_configuration);
-        services.AddAgentTools();
+        services.AddAgentTools(_configuration);
         services.AddAgentPersistence(_configuration);
         services.AddAgentOrchestration(_configuration);
         //services.AddMemoryCache();
@@ -56,13 +57,12 @@ public partial class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            //   endpoints.MapHealthChecks(
-            //   "/health",
-            //new HealthCheckOptions
-            //{
-            //    ResponseWriter =
-            //        UIResponseWriter.WriteHealthCheckUIResponse
-            //});
+            endpoints.MapHealthChecks(
+                "/health",
+                new HealthCheckOptions
+                {
+                    ResponseWriter = WriteHealthCheckResponse
+                });
         });
 
 

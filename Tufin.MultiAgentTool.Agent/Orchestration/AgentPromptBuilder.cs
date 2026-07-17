@@ -22,7 +22,10 @@ public sealed class AgentPromptBuilder
         4. Select only tools included in the provided tool definitions.
         5. Supply arguments that conform exactly to the tool JSON schema.
         6. Tool failures are observations. You may retry with corrected
-           arguments or explain the failure, but do not invent success.
+            arguments or explain the failure, but do not invent success.
+        6a. If a tool fails because of invalid arguments, incomplete SQL,
+            or malformed input, retry once with corrected arguments before
+            producing a final answer.
         7. Use the smallest number of tool calls needed to solve the task.
         8. After all required tool results are available, produce a clear
            final answer for the user.

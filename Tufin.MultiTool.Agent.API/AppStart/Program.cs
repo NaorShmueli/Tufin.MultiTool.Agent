@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Tufin.MultiAgentTool.Persistence.Initialization;
+using Tufin.MultiAgentTool.Tools.Database;
 
 namespace Tufin.MultiTool.Agent.API.AppStart;
 
@@ -32,7 +33,7 @@ public class Program
             .CreateLogger("DatabaseInitialization");
 
         logger.LogInformation(
-            "Starting database migration.");
+            "Starting agent database initialization.");
 
         var initializer = scope.ServiceProvider
             .GetRequiredService<AgentDatabaseInitializer>();
@@ -40,6 +41,17 @@ public class Program
         await initializer.InitializeAsync();
 
         logger.LogInformation(
-            "Database migration completed successfully.");
+            "Agent database initialization completed successfully.");
+
+        logger.LogInformation(
+            "Starting catalog database initialization.");
+
+        var catalogInitializer = scope.ServiceProvider
+            .GetRequiredService<CatalogDatabaseInitializer>();
+
+        await catalogInitializer.InitializeAsync();
+
+        logger.LogInformation(
+            "Catalog database initialization completed successfully.");
     }
 }
