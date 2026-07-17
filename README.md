@@ -13,6 +13,7 @@ Multi-tool AI agent REST API with structured observability. The service accepts 
 - Per-task latency and token usage.
 - Local LLM support through Ollama.
 - Real backend tools: `calculator`, `weather`, `unit_converter`, `database_query`.
+- React + TypeScript frontend for overview, task submission, traces, and task history.
 
 ## Architecture
 
@@ -57,6 +58,7 @@ Main projects:
 - `Tufin.MultiAgentTool.Infrastructure`: Ollama and Open-Meteo integrations.
 - `Tufin.MultiAgentTool.Persistence`: SQLite storage.
 - `Tufin.MultiAgentTool.UnitTests`, `EvaluationTests`, `IntegrationTests`: automated validation.
+- `Tufin.MultiTool.Agent.Frontend`: React, TypeScript, Vite, Tailwind UI.
 
 ## Reasoning Loop
 
@@ -141,6 +143,18 @@ Swagger is available in development at:
 http://localhost:8080/swagger
 ```
 
+The frontend is available at:
+
+```text
+http://localhost:8080
+```
+
+Frontend routes:
+
+- `/`: overview, architecture, capabilities.
+- `/chat`: submit one independent task and inspect the final answer plus trace.
+- `/tasks`: query persisted tasks and inspect full task responses.
+
 Stop services:
 
 ```powershell
@@ -165,6 +179,29 @@ Run tests:
 
 ```powershell
 dotnet test Tufin.MultiTool.Agent.sln
+```
+
+Run frontend locally during development:
+
+```powershell
+cd Tufin.MultiTool.Agent.Frontend
+npm install
+npm run dev
+```
+
+The Vite dev server runs at:
+
+```text
+http://localhost:5173
+```
+
+It proxies API calls to `http://localhost:8080`.
+
+Build frontend locally:
+
+```powershell
+cd Tufin.MultiTool.Agent.Frontend
+npm run build
 ```
 
 ## API Examples

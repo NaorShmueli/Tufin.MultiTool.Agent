@@ -17,6 +17,20 @@ RUN dotnet publish \
 
 
 # -------------------------
+# Frontend build stage
+# -------------------------
+FROM node:22-alpine AS frontend-build
+
+WORKDIR /frontend
+
+COPY Tufin.MultiTool.Agent.Frontend/package*.json ./
+RUN npm ci
+
+COPY Tufin.MultiTool.Agent.Frontend/ ./
+RUN npm run build
+
+
+# -------------------------
 # Runtime stage
 # -------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
@@ -26,6 +40,7 @@ WORKDIR /app
 RUN mkdir -p /app/data
 
 COPY --from=build /app/publish .
+COPY --from=frontend-build /frontend/dist ./wwwroot
 
 ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_RUNNING_IN_CONTAINER=true

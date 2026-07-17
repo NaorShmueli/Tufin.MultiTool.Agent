@@ -53,6 +53,8 @@ public partial class Startup
         }
 
         app.UseRouting();
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
 
         app.UseEndpoints(endpoints =>
         {
@@ -63,6 +65,8 @@ public partial class Startup
                 {
                     ResponseWriter = WriteHealthCheckResponse
                 });
+
+            endpoints.MapFallbackToFile("index.html");
         });
 
 
