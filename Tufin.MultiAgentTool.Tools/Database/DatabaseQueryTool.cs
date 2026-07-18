@@ -20,7 +20,7 @@ public sealed class DatabaseQueryTool : IAgentTool
     public AgentToolDefinition Definition { get; } =
         new(
             "database_query",
-            """
+            @"
             Executes a read-only SQL SELECT query against a pre-seeded
             fictional product catalog SQLite database.
 
@@ -44,7 +44,7 @@ public sealed class DatabaseQueryTool : IAgentTool
 
             Only SELECT queries are allowed. Do not call this tool for
             calculations unrelated to catalog data.
-            """,
+            ",
             JsonSerializer.SerializeToElement(
                 new
                 {
@@ -54,11 +54,14 @@ public sealed class DatabaseQueryTool : IAgentTool
                         query = new
                         {
                             type = "string",
-                            description =
-                                "A single read-only SQL SELECT query. " +
-                                "String values must be enclosed in single quotes. " +
-                                "Example: SELECT name, price FROM products " +
-                                "WHERE name = 'iPhone 17'",
+                            description = @"
+                                          One complete, read-only SQLite SELECT statement.
+                                          For text literals, use only the ASCII apostrophe ' (U+0027).
+                                          Never use typographic quotes, Unicode escape sequences, or an
+                                          incomplete condition ending with an operator.
+                                          Example:
+                                          SELECT name, price FROM products WHERE name = 'iPhone 17'
+                                          ",
                             minLength = 1,
                             maxLength = MaximumQueryLength
                         }
@@ -85,6 +88,7 @@ public sealed class DatabaseQueryTool : IAgentTool
         }
 
         var query = queryProperty.GetString()?.Trim();
+        query = NormalizeQuery(query);
 
         var validationError = ValidateQuery(query);
         if (validationError is not null)
@@ -155,7 +159,18 @@ public sealed class DatabaseQueryTool : IAgentTool
                 exception.Message);
         }
     }
+    private static string NormalizeQuery(string query)
+    {
+        return query
+            // Literal escape sequences returned as text
+            .Replace("\\u2018", "'", StringComparison.OrdinalIgnoreCase)
+            .Replace("\\u2019", "'", StringComparison.OrdinalIgnoreCase)
 
+            // Actual Unicode quotation characters
+            .Replace("\u2018", "'")
+            .Replace("\u2019", "'")
+            .Trim();
+    }
     private static string? ValidateQuery(string? query)
     {
         if (string.IsNullOrWhiteSpace(query))
