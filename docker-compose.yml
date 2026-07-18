@@ -23,26 +23,24 @@ services:
       Agent__Temperature: "0"
 
       OpenMeteo__GeocodingBaseUrl: https://geocoding-api.open-meteo.com
-
       OpenMeteo__ForecastBaseUrl: https://api.open-meteo.com
-
       OpenMeteo__TimeoutSeconds: "10"
 
       Ollama__BaseUrl: http://ollama:11434
       Ollama__Model: llama3.2:3b
+      Ollama__TimeoutSeconds: "120"
 
     volumes:
       - agent-data:/app/data
 
     depends_on:
-      ollama:
-        condition: service_started
+      ollama-model-init:
+        condition: service_completed_successfully
 
     restart: unless-stopped
 
   ollama:
     container_name: tufin-multi-agent-ollama
-
     image: ollama/ollama:latest
 
     ports:
@@ -51,7 +49,42 @@ services:
     volumes:
       - ollama-data:/root/.ollama
 
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
     restart: unless-stopped
+
+  ollama-model-init:
+    container_name: tufin-multi-agent-ollama-init
+    image: ollama/ollama:latest
+
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        echo "Checking whether llama3.2:3b is available..."
+
+        if ollama list | grep -q "llama3.2:3b"; then
+          echo "Model llama3.2:3b is already available."
+        else
+          echo "Pulling llama3.2:3b..."
+          ollama pull llama3.2:3b
+        fi
+
+        echo "Ollama model initialization completed."
+
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+    restart: "no"
 
 volumes:
   agent-data:
